@@ -17730,6 +17730,57 @@
         }
     </style>
 
+    <!-- PRELOADER STYLE -->
+    <style>
+        .spinner-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 999999;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            background-color: #2653d4;
+            position: absolute;
+            top: 48%;
+            left: 48%;
+            -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+            animation: sk-rotateplane 1.2s infinite ease-in-out;
+        }
+        
+        @-webkit-keyframes sk-rotateplane {
+            0% {
+                -webkit-transform: perspective(120px)
+            }
+            50% {
+                -webkit-transform: perspective(120px) rotateY(180deg)
+            }
+            100% {
+                -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg)
+            }
+        }
+        
+        @keyframes sk-rotateplane {
+            0% {
+                transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+            }
+            50% {
+                transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+                -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+            }
+            100% {
+                transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            }
+        }
+    </style>
+
     <script>
         var dataArray = [];
         var Socket;
@@ -17753,6 +17804,10 @@
 </head>
 
 <body id="page-top" onload="javascript:init()">
+    <div class="spinner-wrapper">
+        <!-- <h1 style="text-align:center; padding-top: 30vh" class="h1 mx-3 font-weight-bold text-primary">SMART COOKIES</h1> -->
+        <div class="spinner"></div>
+    </div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -17961,6 +18016,7 @@
     <!--
     <script src="vendor/jquery/jquery.min.js"></script>
 -->
+
     <script>
         /*! jQuery v3.5.1 | (c) JS Foundation and other contributors | jquery.org/license */ ! function(e, t) {
             "use strict";
@@ -31237,6 +31293,19 @@
                 }]
             },
             options: options
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            //Preloader
+            preloaderFadeOutTime = 500;
+
+            function hidePreloader() {
+                var preloader = $('.spinner-wrapper');
+                preloader.fadeOut(preloaderFadeOutTime);
+            }
+            hidePreloader();
         });
     </script>
 
