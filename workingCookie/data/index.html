@@ -17728,6 +17728,14 @@
         body.sidebar-toggled footer.sticky-footer {
             width: 100%
         }
+        
+        #page-content {
+            flex: 1 0 auto;
+        }
+        
+        #sticky-footer {
+            flex-shrink: none;
+        }
     </style>
 
     <!-- PRELOADER STYLE -->
@@ -17745,38 +17753,49 @@
         .spinner {
             width: 40px;
             height: 40px;
-            background-color: #2653d4;
             position: absolute;
             top: 48%;
             left: 48%;
-            -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
-            animation: sk-rotateplane 1.2s infinite ease-in-out;
         }
         
-        @-webkit-keyframes sk-rotateplane {
-            0% {
-                -webkit-transform: perspective(120px)
+        .double-bounce1,
+        .double-bounce2 {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #2653d4;
+            opacity: 0.6;
+            position: absolute;
+            top: 0;
+            left: 0;
+            -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+            animation: sk-bounce 2.0s infinite ease-in-out;
+        }
+        
+        .double-bounce2 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+        }
+        
+        @-webkit-keyframes sk-bounce {
+            0%,
+            100% {
+                -webkit-transform: scale(0.0)
             }
             50% {
-                -webkit-transform: perspective(120px) rotateY(180deg)
-            }
-            100% {
-                -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg)
+                -webkit-transform: scale(1.0)
             }
         }
         
-        @keyframes sk-rotateplane {
-            0% {
-                transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+        @keyframes sk-bounce {
+            0%,
+            100% {
+                transform: scale(0.0);
+                -webkit-transform: scale(0.0);
             }
             50% {
-                transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-                -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
-            }
-            100% {
-                transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-                -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                transform: scale(1.0);
+                -webkit-transform: scale(1.0);
             }
         }
     </style>
@@ -17806,11 +17825,16 @@
 <body id="page-top" onload="javascript:init()">
     <div class="spinner-wrapper">
         <!-- <h1 style="text-align:center; padding-top: 30vh" class="h1 mx-3 font-weight-bold text-primary">SMART COOKIES</h1> -->
-        <div class="spinner"></div>
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
     </div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+
+
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -17851,23 +17875,22 @@
 
                         <!-- Area Chart -->
                         <div class="col-xl-6 col-lg-12">
-                            <div class="card shadow mb-4">
+                            <div class="card border-left-primary shadow mb-4">
                                 <!-- Card Header - Dropdown -->
+
 
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 contenteditable=true class="m-0 font-weight-bold text-primary">My Weather Station</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" id="metricButton" onclick="metricFunction()" href="#">Use imperial units</a>
-                                            <a class="dropdown-item" href="#">Rename cookie</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
+                                    <div>
+                                        <span class="badge badge-info badge-pill">LIVE</span>
+                                        <span class="badge badge-secondary badge-pill">OFFLINE</span>
+                                        <span class="badge badge-danger badge-pill">RECORDING</span>
+
                                     </div>
+
+
+
+
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
@@ -17911,38 +17934,21 @@
 
                     </div>
 
-                    <div class="row">
 
+                    <div class="row">
                         <!-- Area Chart -->
-                        <div class="col-lg-12">
-                            <div class="card shadow mb-4">
+                        <div class="col-lg-4">
+                            <div class="card shadow  mb-4">
                                 <!-- Card Header - Dropdown -->
 
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Record Data</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" id="metricButton" onclick="metricFunction()" href="#">Use imperial units</a>
-                                            <a class="dropdown-item" href="#">Rename cookie</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
+                                    <h6 class="m-0 font-weight-bold text-primary">Quick Recording</h6>
+
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="quick-recording-tab" data-toggle="pill" href="#quick-recording-panel" role="tab" aria-controls="pills-home" aria-selected="true">Quick Recording</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="schedule-recording-tab" data-toggle="pill" href="#schedule-recording-panel" role="tab" aria-controls="pills-profile" aria-selected="false">Schedule A Recording</a>
-                                        </li>
-                                    </ul>
+
+
                                     <div class="tab-content" id="pills-tabContent">
                                         <div class="tab-pane fade show active" id="quick-recording" role="tabpanel" aria-labelledby="quick-recording-tab">
                                             <button id="recordButton" type="button" class="btn btn-outline-danger" data-toggle="button" aria-pressed="false" autocomplete="off">Start Recording</button>
@@ -17952,16 +17958,86 @@
                                         </div>
 
 
-                                        <div class="tab-pane fade" id="schedule-recording" role="tabpanel" aria-labelledby="schedule-recording-tab">
-                                            hO
-                                        </div>
+
 
                                     </div>
 
                                 </div>
                             </div>
+
                         </div>
 
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Schedule A Recording</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <h6>Starting Date and Time</h6>
+
+                                    <div class="input-group mb-3">
+
+                                        <input type="datetime-local" id="datetime-input" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                    <h6>Duration</h6>
+                                    <form>
+                                        <div class="form-row">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <input type="number" id="hour-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon1">h</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <input type="number" id="minute-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon1">m</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <input type="number" id="second-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon1">s</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <button id="schedule-button" type="button" class="btn btn-outline-primary" data-toggle="button">Schedule</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Scheduled Recordings</h6>
+
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+
+
+                                    <div class="list-group" id="recordings-list">
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>
@@ -31081,6 +31157,15 @@
         // record start time
         var startTime;
         var timerEnabled = false;
+
+        $("#schedule-button").click(function() {
+            var li = $("<li></li>").text($("#datetime-input").val());
+            $(li).appendTo($("#recordings-list")).addClass('list-group-item list-group-item-action');
+            $("#datetime-input")[0].value = "";
+
+        });
+
+
 
         function display() {
             if (isRecording) {
