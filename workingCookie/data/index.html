@@ -17815,8 +17815,8 @@
                 if (isRecording) {
                     dataArray.push([t, data]);
                 }
-                addData(tempChart, t, data[0]);
-                addData(humidChart, t, data[1]);
+                addData(tempChart, t, data[0].toFixed(2));
+                addData(humidChart, t, data[1].toFixed(2));
             }
         }
     </script>
