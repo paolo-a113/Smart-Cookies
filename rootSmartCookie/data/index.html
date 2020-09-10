@@ -31150,7 +31150,7 @@
         var tempArray = [];
         var count = 0;
 
-        var maxDataPoints = 100;
+        var maxDataPoints = 500;
 
         var isMetric = 1;
 
@@ -31233,12 +31233,12 @@
         function addData(chart, label, data) {
             if (chart.canvas.id == 'temperature-chart') {
                 if (isMetric) {
-                    document.getElementById('tempValue').textContent = (1.0 * data).toFixed(2) + "°C";
+                    document.getElementById('tempValue').textContent = data + "°C";
                 } else {
                     document.getElementById('tempValue').textContent = (1.8 * data + 32).toFixed(2) + "°F";
                 }
             } else if (chart.canvas.id == 'humidity-chart') {
-                document.getElementById('humidValue').textContent = (1.0 * data).toFixed(2) + "%";
+                document.getElementById('humidValue').textContent = data + "%";
             }
 
             if (chart.data.labels.length > maxDataPoints) {
@@ -31366,7 +31366,7 @@
         var humidChart = new Chart(document.getElementById("humidity-chart"), {
             type: 'line',
             animation: {
-                duration: 1000
+                duration: 0
             },
             data: {
                 labels: [],
