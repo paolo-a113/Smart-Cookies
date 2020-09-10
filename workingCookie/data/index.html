@@ -16250,7 +16250,7 @@
         }
         
         #wrapper {
-            display: flex
+            display: flex height: 100vh;
         }
         
         #wrapper #content-wrapper {
@@ -17916,6 +17916,7 @@
                                                 <canvas id="temperature-chart"></canvas>
                                             </div>
                                         </div>
+
                                         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                                             <div id="humidValue" class="h1 mb-0 font-weight-bold text-gray-800">- -
                                             </div>
@@ -17987,7 +17988,7 @@
                                         <div class="form-row">
                                             <div class="col">
                                                 <div class="input-group mb-3">
-                                                    <input type="number" id="hour-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <input type="number" id="hour-input" class="form-control" min="0" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text" id="basic-addon1">h</span>
                                                     </div>
@@ -17995,7 +17996,7 @@
                                             </div>
                                             <div class="col">
                                                 <div class="input-group mb-3">
-                                                    <input type="number" id="minute-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <input type="number" id="minute-input" class="form-control" placeholder="0" min="0" max="59">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text" id="basic-addon1">m</span>
                                                     </div>
@@ -18003,7 +18004,7 @@
                                             </div>
                                             <div class="col">
                                                 <div class="input-group mb-3">
-                                                    <input type="number" id="second-input" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1">
+                                                    <input type="number" id="second-input" class="form-control" placeholder="0" min="0" max="59" aria-label="Username" aria-describedby="basic-addon1">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text" id="basic-addon1">s</span>
                                                     </div>
@@ -18047,7 +18048,7 @@
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <footer class="sticky-footer">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Smart Cookies 2020</span>
