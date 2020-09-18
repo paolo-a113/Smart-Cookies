@@ -22,7 +22,6 @@ void sendMessage() ;
 Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &sendMessage );
 void sendMessage()
 {
-  // Serializing in JSON Format
   DynamicJsonDocument doc(1024);
   float h = sensor.readHumidity();
   float t = sensor.readTemperature();
@@ -31,7 +30,7 @@ void sendMessage()
   String msg ;
   serializeJson(doc, msg);
   mesh.sendBroadcast( msg );
-  Serial.println("from node2");
+//  Serial.println("from node2");
   Serial.println(msg);
   taskSendMessage.setInterval((TASK_SECOND * 1));
 }

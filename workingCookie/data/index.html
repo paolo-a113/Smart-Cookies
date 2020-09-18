@@ -17805,25 +17805,111 @@
         var dataArray = [];
         var Socket;
         var isRecording = false;
+        var nodeList = [];
+        var Socket1 = [];
+        var tempChart = [];
+        var humidChart = [];
+        var Charts = {};
+
 
         function init() {
             Socket1 = new WebSocket('ws://' + window.location.hostname + ':81/');
+
             Socket1.onmessage = function(event) {
-                console.log(data);
                 var t = (new Date()).toLocaleTimeString();
-                var data = event.data.split(" ");
+                var data = event.data.split(",");
+
+                console.log(data);
+
+                if (data[0].length == 10) {
+                    var nodeID = data[0];
+
+                    if (!nodeList.includes(data[0])) { // If there is a new node, create a new chart
+
+                        // Charts.nodeID = "";
+                        nodeList.push(nodeID);
+
+                        $('#cardContainer').append($('<div class="col-xl-4 col-lg-12 fade show"></div>').attr('id', nodeID).append($("<div class='card border-left-primary shadow mb-4'></div>").append($("<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'></div>").append($("<h6 contenteditable=true class='m-0 font-weight-bold text-primary'></h6>").text(nodeID)).append($("<div><span class='badge badge-info badge-pill'>LIVE</span><span class='badge badge-secondary badge-pill'>OFFLINE</span><span class='badge badge-danger badge-pill'>RECORDING</span></div>"))).append($(' <div class="card-body"> <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"> <li class="nav-item"> <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Temperature</a> </li><li class="nav-item"> <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Humidity</a> </li></ul> <div class="tab-content" id="pills-tabContent"> <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"> <div id="tempValue" class="h1 mb-0 font-weight-bold text-gray-800">- -</div><div class="chart-area"> <canvas id="temperature-chart"></canvas> </div></div><div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"> <div id="humidValue" class="h1 mb-0 font-weight-bold text-gray-800">- - </div><div class="chart-area"> <canvas id="humidity-chart"></canvas> </div></div></div></div>'))));
+
+                        tempChart = new Chart(document.getElementById("temperature-chart"), {
+                            type: 'line',
+                            animation: false,
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    data: [],
+                                    label: "Temperature (C)",
+                                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                    borderColor: "rgba(78, 115, 223, 1)",
+                                    pointRadius: 0
+                                }]
+                            },
+                            options: options
+                        });
+
+                        humidChart = new Chart(document.getElementById("humidity-chart"), {
+                            type: 'line',
+                            animation: {
+                                duration: 1000
+                            },
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    data: [],
+                                    label: "Humidity (%)",
+                                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                    borderColor: "rgba(78, 115, 223, 1)",
+
+                                    pointRadius: 0,
+                                }]
+                            },
+                            options: options
+                        });
+
+                        Charts[nodeID] = [tempChart, humidChart];
+                    }
+
+                    Charts[data[0]].forEach(
+                        function(val, i) {
+                            addData(val, t, data[i + 1]);
+                        }
+                    )
+
+                }
+
+
+                // console.log(JSON.parse(data));
                 if (isRecording) {
                     dataArray.push([t, data]);
                 }
-                addData(tempChart, t, data[0]);
-                addData(humidChart, t, data[1]);
+
             }
+        }
+
+        function updateCards(nodeID) {
+
         }
     </script>
 
+
+
+
+
+
+
+
+
+
 </head>
 
-<body id="page-top" onload="javascript:init()">
+
+
+<body id="page-top">
+
+
+
+
+
     <div class="spinner-wrapper">
         <!-- <h1 style="text-align:center; padding-top: 30vh" class="h1 mx-3 font-weight-bold text-primary">SMART COOKIES</h1> -->
         <div class="spinner">
@@ -17872,13 +17958,13 @@
 
                     <!-- Content Row -->
 
-                    <div class="row">
+                    <div class="row" id="cardContainer">
 
                         <!-- Area Chart -->
-                        <div class="col-xl-6 col-lg-12">
+                        <!-- <div class="col-xl-6 col-lg-12">
                             <div class="card border-left-primary shadow mb-4">
-                                <!-- Card Header - Dropdown -->
 
+                                
 
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 contenteditable=true class="m-0 font-weight-bold text-primary">My Weather Station</h6>
@@ -17893,7 +17979,7 @@
 
 
                                 </div>
-                                <!-- Card Body -->
+
                                 <div class="card-body">
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                         <li class="nav-item">
@@ -17932,7 +18018,7 @@
 
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                     </div>
 
@@ -31346,41 +31432,7 @@
             }
         }
 
-        var tempChart = new Chart(document.getElementById("temperature-chart"), {
-            type: 'line',
-            animation: false,
-            data: {
-                labels: [],
-                datasets: [{
-                    data: [],
-                    label: "Temperature (C)",
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
-                    borderColor: "rgba(78, 115, 223, 1)",
-
-                    pointRadius: 0
-                }]
-            },
-            options: options
-        });
-
-        var humidChart = new Chart(document.getElementById("humidity-chart"), {
-            type: 'line',
-            animation: {
-                duration: 1000
-            },
-            data: {
-                labels: [],
-                datasets: [{
-                    data: [],
-                    label: "Humidity (%)",
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
-                    borderColor: "rgba(78, 115, 223, 1)",
-
-                    pointRadius: 0,
-                }]
-            },
-            options: options
-        });
+        init();
     </script>
 
     <script>

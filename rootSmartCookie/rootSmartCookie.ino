@@ -5,6 +5,7 @@
 #define   MESH_PORT       5555
 
 // Create AsyncWebServer object on port 80
+SimpleList<uint32_t> nodes;
 
 
 //bool button1_status = 0;
@@ -46,12 +47,11 @@ void receivedCallback( uint32_t from, String &msg ) {
    String Temp = doc["TEMP"];
    String Hum = doc["HUM"];
 //  Serial.println("From node1");
-//   Serial.print("Temperature: ");
+//   Serial.println("Temperature:");
+Serial.printf("%u,",from);
    Serial.print(Temp);
-//    Serial.print(" Humidity: ");
-Serial.print(" ");
+    Serial.print(",");
    Serial.println(Hum);
-
 }
 void newConnectionCallback(uint32_t nodeId) {
 //  Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);
@@ -62,6 +62,19 @@ void changedConnectionCallback() {
 void nodeTimeAdjustedCallback(int32_t offset) {
 //  Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
 }
+//void showNodeList() {
+//  nodes = mesh.getNodeList();
+//
+////  Serial.printf("Connection list:");
+//
+//  SimpleList<uint32_t>::iterator node = nodes.begin();
+//  while (node != nodes.end()) {
+//    Serial.printf(" %u", *node);
+//    node++;
+//  }
+//  Serial.println();  
+//}
+
 void setup() {
   Serial.begin(115200);
 //  pinMode(Button1, INPUT);
@@ -99,6 +112,4 @@ void setup() {
 void loop() {
   mesh.update();
 //      MDNS.update();
-
-
 }
