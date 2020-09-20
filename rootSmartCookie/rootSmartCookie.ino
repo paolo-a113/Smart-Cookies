@@ -46,12 +46,16 @@ void receivedCallback( uint32_t from, String &msg ) {
   }
    String Temp = doc["TEMP"];
    String Hum = doc["HUM"];
+  String Pres = doc["PRES"];
+
 //  Serial.println("From node1");
 //   Serial.println("Temperature:");
 Serial.printf("%u,",from);
    Serial.print(Temp);
     Serial.print(",");
-   Serial.println(Hum);
+   Serial.print(Hum);
+     Serial.print(",");
+   Serial.println(Pres);
 }
 void newConnectionCallback(uint32_t nodeId) {
 //  Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);

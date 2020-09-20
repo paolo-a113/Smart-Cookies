@@ -26,37 +26,6 @@ const char* password = "";  //Enter Password here
 AsyncWebServer server(80);
 WebSocketsServer webSocket1 = WebSocketsServer(81);
 
-void getData() {
-
- 
-   
-//  float t = sensor.readTemperature();
-//  float h = sensor.readHumidity();
-//
-//  if (isnan(t) || t==998 || isnan(h) || h==998 ) {    
-//    Serial.println("Failed to read from sensor!");
-//    return;
-//  }
-//  else {
-////    Serial.println(t);
-//    char tBuf[10];
-//    char hBuf[10];
-//    char msgBuf[10];
-//
-//    dtostrf(t, 4, 2, tBuf);
-//    dtostrf(h, 4, 2, hBuf);
-//    strcat(msgBuf,tBuf);
-//    strcat(msgBuf," ");
-//    strcat(msgBuf,hBuf);
-//
-//    Serial.println(msgBuf);
-    webSocket1.broadcastTXT(cString);
-    return;
-//}  
-}
-
-
-
 unsigned long previousMillis = 0;        // will store last time LED was updated
 
 // constants won't change:
