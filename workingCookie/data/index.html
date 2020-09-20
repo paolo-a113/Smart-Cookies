@@ -31311,7 +31311,7 @@
         function downloadData() {
 
             console.log("Download Function Fired");
-            var csv = 'Time,Temperature (°C), Humidity (%)\n';
+            var csv = 'Time,Temperature (°C), Humidity (%), Pressure (hPa)\n';
             dataArray.forEach(function(row) {
                 csv += row.join(',');
                 csv += "\n";
