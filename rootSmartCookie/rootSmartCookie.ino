@@ -44,12 +44,13 @@ void receivedCallback( uint32_t from, String &msg ) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.c_str());
   }
-   String Temp = doc["TEMP"];
-   String Hum = doc["HUM"];
-  String Pres = doc["PRES"];
+   String Temp = doc["T"];
+   String Hum = doc["H"];
+  String Pres = doc["P"];
 
 //  Serial.println("From node1");
 //   Serial.println("Temperature:");
+Serial.print("*,");
 Serial.printf("%u,",from);
    Serial.print(Temp);
     Serial.print(",");

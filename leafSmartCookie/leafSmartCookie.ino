@@ -25,8 +25,8 @@ void sendMessage()
   DynamicJsonDocument doc(1024);
   float h = sensor.readHumidity();
   float t = sensor.readTemperature();
-  doc["TEMP"] = t;
-  doc["HUM"] = h;
+  doc["T"] = t;
+  doc["H"] = h;
   String msg ;
   serializeJson(doc, msg);
   mesh.sendBroadcast( msg );

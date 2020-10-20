@@ -17815,16 +17815,22 @@
         function init() {
             Socket1 = new WebSocket('ws://' + window.location.hostname + ':81/');
 
+            Socket1.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+                // alert("Your connection was closed. To proceed, please reload the page.");
+                init();
+            };
+
             Socket1.onmessage = function(event) {
                 var t = (new Date()).toLocaleTimeString();
-                var data = event.data.split(",");
+                if (event.data[0] == '*') { //check for start character
+                    var data = event.data.split(",");
 
-                console.log(data);
+                    console.log(data);
 
-                if (data[0].length <= 10) {
-                    var nodeID = data[0];
+                    var nodeID = data[1];
 
-                    if (!nodeList.includes(data[0])) { // If there is a new node, create a new chart
+                    if (!nodeList.includes(nodeID)) { // If there is a new node, create a new chart
 
                         // Charts.nodeID = "";
                         nodeList.push(nodeID);
@@ -17888,13 +17894,16 @@
                         $('#' + nodeID).addClass('show');
                     }
 
-                    Charts[nodeID].forEach(
-                        function(val, i) {
-                            addData(val, t, data[i + 1], nodeID);
-                        }
-                    )
-
                 }
+
+
+                Charts[nodeID].forEach(
+                    function(val, i) {
+                        addData(val, t, data[i + 2], nodeID);
+                    }
+                )
+
+
 
 
                 // console.log(JSON.parse(data));
@@ -31206,10 +31215,11 @@
         var timerEnabled = false;
 
         $("#schedule-button").click(function() {
-            var li = $("<li></li>").text($("#datetime-input").val());
-            $(li).appendTo($("#recordings-list")).addClass('list-group-item list-group-item-action');
-            $("#datetime-input")[0].value = "";
-
+            if ($("#datetime-input").val()) {
+                var li = $("<li></li>").text($("#datetime-input").val());
+                $(li).appendTo($("#recordings-list")).addClass('list-group-item list-group-item-action');
+                $("#datetime-input")[0].value = "";
+            }
         });
 
 
