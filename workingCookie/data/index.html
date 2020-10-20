@@ -17806,6 +17806,8 @@
         var Socket;
         var isRecording = false;
         var nodeList = [];
+        var meshList = [];
+
         var Socket1 = [];
         var tempChart = [];
         var humidChart = [];
@@ -17824,7 +17826,7 @@
 
             Socket1.onmessage = function(event) {
                 var t = (new Date()).toLocaleTimeString();
-                if (event.data[0] == '*') { //check for start character
+                if (event.data[0] == '$') { //check for start character for telemetry
                     var data = event.data.split(",");
 
                     console.log(data);
@@ -17894,25 +17896,44 @@
                         Charts[nodeID] = [tempChart, humidChart, pressureChart];
                         $('#' + nodeID).addClass('show');
                     }
-                }
 
-                Charts[nodeID].forEach(
-                    function(val, i) {
-                        addData(val, t, data[i + 2], nodeID);
+                    Charts[nodeID].forEach(
+                        function(val, i) {
+                            addData(val, t, data[i + 2], nodeID);
+                        }
+                    )
+
+                    // console.log(JSON.parse(data));
+                    if (isRecording) {
+                        dataArray.push([t, data]);
                     }
-                )
+                } else if (event.data[0] == '*') { // start character for mesh topology
+                    console.log(event.data.substring(1));
+                    var meshTopology = JSON.parse(event.data.substring(1));
 
-                // console.log(JSON.parse(data));
-                if (isRecording) {
-                    dataArray.push([t, data]);
+                    for (var k in meshTopology) {
+                        if (meshTopology[k] instanceof Object) {} else {
+                            meshList = meshTopology[k];
+                        };
+                    }
+
+                    meshList.forEach(function(item, index) {
+                        var nodeLi = $("<li></li>").text(item);
+                        $(nodeLi).appendTo($("#node-list")).addClass('list-group-item list-group-item-action');
+
+                    });
+
+
+
+
+
+
                 }
+            }
+
+            function updateCards(nodeID) {
 
             }
-        }
-
-        function updateCards(nodeID) {
-
-        }
     </script>
 </head>
 
@@ -17977,6 +17998,28 @@
                     </div>
 
 
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Connected Nodes</h6>
+
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+
+
+                                    <div class="list-group" id="node-list">
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
                     <div class="row">
                         <!-- Area Chart -->
                         <div class="col-lg-4">

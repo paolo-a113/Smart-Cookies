@@ -12,7 +12,7 @@
 
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
 //Receiver code  
-  char cString[40];
+  char cString[100];
   byte chPos = 0;
   byte ch = 0;
 
@@ -42,13 +42,16 @@ void setup(){
     return;
   }
 
-  // Connect to Wi-Fi
-  WiFi.softAP(ssid);
-//  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
-//  while (WiFi.status() != WL_CONNECTED) {
-//    delay(1000);
-//    Serial.println("Connecting to WiFi..");
-//  }
+
+// DEVELOPMENT MODE
+// WiFi.softAP(ssid);
+
+// TESTING MODE
+  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
+  }
 
   delay(100);
 
@@ -93,7 +96,7 @@ if (Serial.available())  {
     if (c == '\n') {  //looks for end of data packet marker
       Serial.read(); //gets rid of following \r
       Serial.println(readString); //prints string to serial port out
-      readString.toCharArray(cString, 40);
+      readString.toCharArray(cString, 100); //was 40
          webSocket1.broadcastTXT(cString);
       //do stuff with captured readString
      

@@ -34,6 +34,7 @@ void sendMessage()
 //  Serial.println(msg);
 //  taskSendMessage.setInterval((TASK_SECOND * 1));
 }
+
 void receivedCallback( uint32_t from, String &msg ) {
   String json;
   DynamicJsonDocument doc(1024);
@@ -50,7 +51,7 @@ void receivedCallback( uint32_t from, String &msg ) {
 
 //  Serial.println("From node1");
 //   Serial.println("Temperature:");
-Serial.print("*,");
+Serial.print("$,");
 Serial.printf("%u,",from);
    Serial.print(Temp);
     Serial.print(",");
@@ -63,6 +64,8 @@ void newConnectionCallback(uint32_t nodeId) {
 }
 void changedConnectionCallback() {
 //  Serial.printf("Changed connections\n");
+    Serial.println('*'+mesh.subConnectionJson());
+
 }
 void nodeTimeAdjustedCallback(int32_t offset) {
 //  Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);

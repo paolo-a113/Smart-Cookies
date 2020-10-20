@@ -19,7 +19,7 @@ Adafruit_Si7021 sensor = Adafruit_Si7021();
 Scheduler userScheduler; 
 painlessMesh  mesh;
 void sendMessage() ; 
-Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &sendMessage );
+Task taskSendMessage( TASK_SECOND * 5 , TASK_FOREVER, &sendMessage );
 void sendMessage()
 {
   DynamicJsonDocument doc(1024);
@@ -33,6 +33,14 @@ void sendMessage()
 //  Serial.println("from node2");
   Serial.println(msg);
   taskSendMessage.setInterval((TASK_SECOND * 1));
+
+}
+
+void sendNodeList(){
+    DynamicJsonDocument doc(1024);
+      serializeJson(doc, mesh.subConnectionJson());
+        Serial.println(mesh.subConnectionJson());
+  taskSendMessage.setInterval((TASK_SECOND * 5));
 }
 // Needed for painless library
 void receivedCallback( uint32_t from, String &msg ) {
