@@ -17815,6 +17815,7 @@
         function init() {
             Socket1 = new WebSocket('ws://' + window.location.hostname + ':81/');
 
+            // Keep websocket open
             Socket1.onclose = function(event) {
                 console.log("WebSocket is closed now.");
                 // alert("Your connection was closed. To proceed, please reload the page.");
