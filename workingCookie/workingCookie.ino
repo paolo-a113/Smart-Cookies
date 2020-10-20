@@ -43,12 +43,12 @@ void setup(){
   }
 
   // Connect to Wi-Fi
-  //WiFi.softAP(ssid);
-  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
-  }
+  WiFi.softAP(ssid);
+//  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
+//  while (WiFi.status() != WL_CONNECTED) {
+//    delay(1000);
+//    Serial.println("Connecting to WiFi..");
+//  }
 
   delay(100);
 

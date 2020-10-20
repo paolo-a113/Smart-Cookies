@@ -17894,18 +17894,13 @@
                         Charts[nodeID] = [tempChart, humidChart, pressureChart];
                         $('#' + nodeID).addClass('show');
                     }
-
                 }
-
 
                 Charts[nodeID].forEach(
                     function(val, i) {
                         addData(val, t, data[i + 2], nodeID);
                     }
                 )
-
-
-
 
                 // console.log(JSON.parse(data));
                 if (isRecording) {
@@ -17919,16 +17914,6 @@
 
         }
     </script>
-
-
-
-
-
-
-
-
-
-
 </head>
 
 
