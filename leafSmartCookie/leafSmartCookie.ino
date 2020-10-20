@@ -36,12 +36,6 @@ void sendMessage()
 
 }
 
-void sendNodeList(){
-    DynamicJsonDocument doc(1024);
-      serializeJson(doc, mesh.subConnectionJson());
-        Serial.println(mesh.subConnectionJson());
-  taskSendMessage.setInterval((TASK_SECOND * 5));
-}
 // Needed for painless library
 void receivedCallback( uint32_t from, String &msg ) {
   String json;

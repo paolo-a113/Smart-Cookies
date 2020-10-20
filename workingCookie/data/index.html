@@ -17909,43 +17909,31 @@
                         dataArray.push([t, data]);
                     }
                 } else if (event.data[0] == '*') { // start character for mesh topology
-                    // console.log(event.data.substring(1));
-                    // var meshTopology = JSON.parse(event.data.substring(1));
+                    console.log(event.data.substring(1));
+                    var meshTopology = JSON.parse(event.data.substring(1));
 
-                    // for (var k in meshTopology) {
-                    //     if (meshTopology[k] instanceof Object) {} else {
-                    //         meshList = meshTopology[k];
-                    //     };
-                    // }
-
+                    for (var k in meshTopology) {
+                        if (meshTopology[k] instanceof Object) {
+                            console.log(meshTopology[k]);
+                        } else {
+                            meshList = meshTopology[k];
+                            console.log(meshTopology[k]);
+                        };
+                    }
                     // meshList.forEach(function(item, index) {
                     //     var nodeLi = $("<li></li>").text(item);
                     //     $(nodeLi).appendTo($("#node-list")).addClass('list-group-item list-group-item-action');
 
                     // });
-
-
-
-
-
-
                 }
             }
-
-            function updateCards(nodeID) {
-
-            }
+        }
     </script>
 </head>
 
 
 
 <body id="page-top">
-
-
-
-
-
     <div class="spinner-wrapper">
         <!-- <h1 style="text-align:center; padding-top: 30vh" class="h1 mx-3 font-weight-bold text-primary">SMART COOKIES</h1> -->
         <div class="spinner">
@@ -17956,9 +17944,6 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-
-
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
