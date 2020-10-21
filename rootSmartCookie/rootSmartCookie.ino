@@ -7,16 +7,13 @@
 // Create AsyncWebServer object on port 80
 SimpleList<uint32_t> nodes;
 
-
-//bool button1_status = 0;
-//bool button2_status = 0;
-//Pin Declaration
-//#define Button1 D5
-//#define Button2 D6
 Scheduler userScheduler; 
 painlessMesh  mesh;
-void sendMessage() ; 
+void sendMessage(); 
+void sendMeshTopology();
 Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &sendMessage );
+Task taskSendMeshTopology( TASK_SECOND * 5 , TASK_FOREVER, &sendMeshTopology );
+
 void sendMessage() 
 {
 ////// Reading Status of Pushbutton
@@ -33,6 +30,12 @@ void sendMessage()
 //    mesh.sendBroadcast( msg );
 //  Serial.println(msg);
 //  taskSendMessage.setInterval((TASK_SECOND * 1));
+}
+
+void sendMeshTopology() {
+  Serial.println('*'+mesh.subConnectionJson());
+taskSendMessage.setInterval((TASK_SECOND * 5));
+
 }
 
 void receivedCallback( uint32_t from, String &msg ) {
@@ -59,13 +62,17 @@ Serial.printf("%u,",from);
      Serial.print(",");
    Serial.println(Pres);
 }
+
+
+
 void newConnectionCallback(uint32_t nodeId) {
 //  Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);
+  Serial.println('*'+mesh.subConnectionJson());
+
 }
 void changedConnectionCallback() {
 //  Serial.printf("Changed connections\n");
     Serial.println('*'+mesh.subConnectionJson());
-
 }
 void nodeTimeAdjustedCallback(int32_t offset) {
 //  Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
@@ -93,8 +100,8 @@ void setup() {
   mesh.onNewConnection(&newConnectionCallback);
   mesh.onChangedConnections(&changedConnectionCallback);
   mesh.onNodeTimeAdjusted(&nodeTimeAdjustedCallback);
-  userScheduler.addTask( taskSendMessage );
-  taskSendMessage.enable();
+  userScheduler.addTask( taskSendMeshTopology );
+  taskSendMeshTopology.enable();
 
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
