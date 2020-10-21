@@ -12,7 +12,7 @@
 
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
 //Receiver code  
-  char cString[100];
+  char cString[40];
   byte chPos = 0;
   byte ch = 0;
 
@@ -96,7 +96,7 @@ if (Serial.available())  {
     if (c == '\n') {  //looks for end of data packet marker
       Serial.read(); //gets rid of following \r
       Serial.println(readString); //prints string to serial port out
-      readString.toCharArray(cString, 100); //was 40
+      readString.toCharArray(cString, 40); //was 40
          webSocket1.broadcastTXT(cString);
       //do stuff with captured readString
      
