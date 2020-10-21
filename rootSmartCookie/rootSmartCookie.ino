@@ -33,7 +33,16 @@ void sendMessage()
 }
 
 void sendMeshTopology() {
-  Serial.println('*'+mesh.subConnectionJson());
+ nodes = mesh.getNodeList();
+  SimpleList<uint32_t>::iterator node = nodes.begin();
+  Serial.print('*');
+  while (node != nodes.end()) {
+    Serial.printf(",%u", *node);
+    node++;
+  }
+  Serial.println();  
+  
+//  Serial.println('*'+mesh.subConnectionJson());
 taskSendMessage.setInterval((TASK_SECOND * 5));
 
 }
@@ -67,28 +76,18 @@ Serial.printf("%u,",from);
 
 void newConnectionCallback(uint32_t nodeId) {
 //  Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);
-  Serial.println('*'+mesh.subConnectionJson());
-
+sendMeshTopology();
 }
 void changedConnectionCallback() {
 //  Serial.printf("Changed connections\n");
-    Serial.println('*'+mesh.subConnectionJson());
+sendMeshTopology();
 }
 void nodeTimeAdjustedCallback(int32_t offset) {
 //  Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
 }
-//void showNodeList() {
-//  nodes = mesh.getNodeList();
-//
-////  Serial.printf("Connection list:");
-//
-//  SimpleList<uint32_t>::iterator node = nodes.begin();
-//  while (node != nodes.end()) {
-//    Serial.printf(" %u", *node);
-//    node++;
-//  }
-//  Serial.println();  
-//}
+void showNodeList() {
+ 
+}
 
 void setup() {
   Serial.begin(115200);
