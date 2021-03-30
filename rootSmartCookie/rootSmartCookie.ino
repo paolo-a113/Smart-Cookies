@@ -3,7 +3,6 @@
 #define   MESH_PREFIX     "whateverYouLike"
 #define   MESH_PASSWORD   "somethingSneaky"
 #define   MESH_PORT       5555
-#define   isNetworkHidden 1
 
 // Create AsyncWebServer object on port 80
 SimpleList<uint32_t> nodes;
@@ -95,7 +94,12 @@ void setup() {
 //  pinMode(Button1, INPUT);
 //  pinMode(Button2, INPUT);
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, 1, isNetworkHidden );
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+//    mesh.initOTAReceive("bridge");
+//  mesh.stationManual("ATTeEPEtxi", "2s?h7j7sw8j=");
+
+
+
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
   mesh.onChangedConnections(&changedConnectionCallback);
@@ -105,6 +109,7 @@ void setup() {
 
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
+   Serial.println(WiFi.localIP());
 
 //  Serial.println(WiFi.softAPIP());
 
