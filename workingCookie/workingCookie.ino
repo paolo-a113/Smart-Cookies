@@ -9,6 +9,8 @@
 #include <ESP8266mDNS.h>
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
+#include <AsyncElegantOTA.h>
+
 
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
 //Receiver code  
@@ -35,6 +37,7 @@ const long interval = 2000;           // interval at which to blink (millisecond
 void setup(){
   Serial.begin(115200);
   Serial.println("SMART COOKIE - SI7021");
+  Serial.println("VERSION 1.0");
     pinMode(LED_BUILTIN, OUTPUT);
 
 
@@ -77,6 +80,9 @@ void setup(){
     request->send(SPIFFS, "/index.html");
   });
 
+    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
+
+
 
   server.begin();
   MDNS.addService("http", "tcp", 80);
@@ -86,6 +92,8 @@ void setup(){
 }
  
 void loop(){
+    AsyncElegantOTA.loop();
+
   webSocket1.loop();
 
   MDNS.update();
