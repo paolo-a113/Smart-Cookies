@@ -25,7 +25,7 @@ BearSSL::CertStore certStore;
 #define GHOTA_USER "paolo-a113"
 #define GHOTA_REPO "Smart-Cookies"
 #define GHOTA_CURRENT_TAG "0.0.1"
-#define GHOTA_BIN_FILE "blinktest.ino.bin"
+#define GHOTA_BIN_FILE "GitHub_Upgrade.ino.generic.bin"
 #define GHOTA_ACCEPT_PRERELEASE 0
 
 #include <ESP_OTA_GitHub.h>
