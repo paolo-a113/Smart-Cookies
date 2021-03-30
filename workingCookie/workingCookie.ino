@@ -28,16 +28,16 @@ const char* password = "";  //Enter Password here
 AsyncWebServer server(80);
 WebSocketsServer webSocket1 = WebSocketsServer(81);
 
-unsigned long previousMillis = 0;        // will store last time LED was updated
+//unsigned long previousMillis = 0;        // will store last time LED was updated
 
 // constants won't change:
-const long interval = 2000;           // interval at which to blink (milliseconds)
+//const long interval = 2000;           // interval at which to blink (milliseconds)
 
 
 void setup(){
   Serial.begin(115200);
   Serial.println("SMART COOKIE - SI7021");
-  Serial.println("VERSION 1.0");
+  Serial.println("VERSION 1.1");
     pinMode(LED_BUILTIN, OUTPUT);
 
 
@@ -48,7 +48,7 @@ void setup(){
   }
 
 
-// DEVELOPMENT MODE
+// PRODUCTION MODE
  WiFi.softAP(ssid);
 
 // TESTING MODE
