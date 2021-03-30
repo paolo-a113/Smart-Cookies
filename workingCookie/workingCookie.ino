@@ -35,6 +35,8 @@ const long interval = 2000;           // interval at which to blink (millisecond
 void setup(){
   Serial.begin(115200);
   Serial.println("SMART COOKIE - SI7021");
+    pinMode(LED_BUILTIN, OUTPUT);
+
 
   // Initialize SPIFFS
   if(!SPIFFS.begin()){
@@ -44,19 +46,23 @@ void setup(){
 
 
 // DEVELOPMENT MODE
-// WiFi.softAP(ssid);
+ WiFi.softAP(ssid);
 
 // TESTING MODE
-  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
-  }
+//  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
+//  while (WiFi.status() != WL_CONNECTED) {
+//    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+//    delay(250);
+//    digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
+//    delay(250);
+//    Serial.println("Connecting...");
+//  }
 
   delay(100);
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
 
-//  Serial.println(WiFi.softAPIP());
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.softAPIP());
+//  Serial.println(WiFi.localIP());
 
  
   if (!MDNS.begin("smartcookies")) {
