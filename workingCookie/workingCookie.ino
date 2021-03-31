@@ -79,8 +79,11 @@ void setup(){
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html");
   });
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+  request->send(SPIFFS, "/style.css","text/css");
+});
 
-    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
+//    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
 
 
 
@@ -92,13 +95,13 @@ void setup(){
 }
  
 void loop(){
-    AsyncElegantOTA.loop();
+//    AsyncElegantOTA.loop();
 
   webSocket1.loop();
 
   MDNS.update();
 
-  unsigned long currentMillis = millis();
+//  unsigned long currentMillis = millis();
 
 //  if (currentMillis - previousMillis >= interval) {
 //    previousMillis = currentMillis;
