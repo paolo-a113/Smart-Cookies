@@ -47,8 +47,25 @@ void receivedCallback( uint32_t from, String &msg ) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.c_str());
   }
-//  relay1_status = doc["Relay1"];
-//  digitalWrite(Relay1, relay1_status);
+
+  File file = SPIFFS.open("/config.txt", "w");
+
+    if (!file) {
+    Serial.println("Error opening file for writing");
+    return;
+  }
+
+  int bytesWritten = file.print("TEST SPIFFS");
+ 
+  if (bytesWritten > 0) {
+    Serial.println("File was written");
+    Serial.println(bytesWritten);
+ 
+  } else {
+    Serial.println("File write failed");
+  }
+ 
+  file.close();
 }
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);

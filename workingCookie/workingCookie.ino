@@ -2,7 +2,9 @@
 #include <Hash.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <FS.h>
+//#include <FS.h>
+#include "LittleFS.h" // LittleFS is declared
+
 #include <Adafruit_Sensor.h>
 #include "Adafruit_Si7021.h"
 #include <WebSocketsServer.h>
@@ -42,7 +44,7 @@ void setup(){
 
 
   // Initialize SPIFFS
-  if(!SPIFFS.begin()){
+  if(!LittleFS.begin()){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
@@ -77,10 +79,10 @@ void setup(){
   Serial.println("mDNS responder started");
   
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html");
+    request->send(LittleFS, "/index.html");
   });
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-  request->send(SPIFFS, "/style.css","text/css");
+  request->send(LittleFS, "/style.css","text/css");
 });
 
 //    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
