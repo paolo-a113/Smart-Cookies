@@ -44,6 +44,8 @@
 
             Socket1.onmessage = function(event) {
                 console.log("received");
+
+
                 var t = (new Date()).toLocaleTimeString();
                 if (event.data[0] == '$') { //check for start character for telemetry
                     var data = event.data.split(",");
@@ -53,6 +55,14 @@
                     var nodeID = data[1];
 
                     if (!nodeList.includes(nodeID)) { // If there is a new node, create a new chart
+
+                        // request name from node
+                        console.log("sent socket msg");
+
+                        Socket1.send(JSON.stringify({
+                            "req": "name",
+                            "node": nodeID
+                        }));
 
                         // Charts.nodeID = "";
                         nodeList.push(nodeID);
@@ -184,7 +194,7 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <a class="navbar-brand" href="#">
-                      <svg preserveAspectRatio="xMinYMin meet" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="640px" height="30px" viewBox="0 0 640 110" enable-background="new 0 0 640 110" xml:space="preserve">  <image id="image0" width="640" height="110" x="0" y="0"
+                        <svg preserveAspectRatio="xMinYMin meet" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="640px" height="30px" viewBox="0 0 640 110" enable-background="new 0 0 640 110" xml:space="preserve">  <image id="image0" width="640" height="110" x="0" y="0"
                           href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAABuCAYAAAC3HKL4AAAABGdBTUEAALGPC/xhBQAAACBjSFJN
                       AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAA
                       CXBIWXMAABYlAAAWJQFJUiTwAABdu0lEQVR42u19d5wV1dn/d2Zu276wvdBZqqIiiIAB3qAxIgYj
@@ -611,7 +621,7 @@
                       YMHCSQaLAFqwYMGCBQsWLJxk+P8LhVn762iOrQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wMy0z
                       MVQwNjoyOTo1MCswMDowMAlsDTwAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDMtMzFUMDY6Mjk6
                       NTArMDA6MDB4MbWAAAAAAElFTkSuQmCC" />
-                      </svg>                    </a>
+                      </svg> </a>
                     <!-- Topbar Navbar -->
 
                 </nav>
