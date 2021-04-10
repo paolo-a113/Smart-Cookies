@@ -8,7 +8,7 @@
 
 //#include <DHT.h>
 // WiFi Credentials
-#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_PREFIX     "mesh0"
 #define   MESH_PASSWORD   "somethingSneaky"
 #define   MESH_PORT       5555
 //Pin Declaration
@@ -74,10 +74,12 @@ Task taskSendMessage( TASK_SECOND * 5 , TASK_FOREVER, &sendMessage );
 //  return true;
 //}
 //
-String loadConfig() {
+String getName() {
   File configFile = LittleFS.open("/config.json", "r");
   if (!configFile) {
-    saveConfig("My Sensor Node");
+    setName("My Sensor Node");
+//    setMesh("mesh0");
+
     Serial.println("Failed to open config file");
     return "";
   }
@@ -115,7 +117,7 @@ String loadConfig() {
 }
 
 //
-bool saveConfig(String nodeName) {
+bool setName(String nodeName) {
   StaticJsonDocument<200> doc;
   doc["nodeName"] = nodeName;
 
@@ -159,12 +161,12 @@ void receivedCallback( uint32_t from, String &msg ) {
 
   if (received["req"] == "!" || received["req"] == "?") {
     if (received["req"] == "!") {
-      saveConfig(received["ren"]);
+      setName(received["ren"]);
     }
 
     DynamicJsonDocument doc(1024);
     doc["req"] = "?";
-    doc["name"] = loadConfig();
+    doc["name"] = getName();
     String msg ;
     serializeJson(doc, msg);
     mesh.sendSingle(from, msg);
@@ -195,6 +197,16 @@ void setup() {
   else {
     Serial.println("SENSOR WORKING");
   }
+
+    delay(1000);
+  Serial.println("Mounting FS...");
+
+  if (!LittleFS.begin()) {
+    Serial.println("Failed to mount file system");
+    return;
+  }
+  getName();
+  
   //  pinMode(Relay1, OUTPUT);
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
@@ -206,14 +218,7 @@ void setup() {
   taskSendMessage.enable();
   mesh.setContainsRoot(true);
 
-  delay(1000);
-  Serial.println("Mounting FS...");
 
-  if (!LittleFS.begin()) {
-    Serial.println("Failed to mount file system");
-    return;
-  }
-  loadConfig();
 
 }
 void loop() {
