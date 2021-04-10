@@ -133,7 +133,7 @@ void loop() {
     char c = Serial.read();  //gets one byte from serial buffer
     if (c == '\n') {  //looks for end of data packet marker
       Serial.read(); //gets rid of following \r
-      if (readString.startsWith("$") || readString.startsWith("*")) {
+      if (readString.startsWith("$") || readString.startsWith("*") || readString.startsWith("?")) {
         Serial.println(readString); //prints string to serial port out
         readString.toCharArray(cString, 40); //was 40
         webSocket1.broadcastTXT(cString);

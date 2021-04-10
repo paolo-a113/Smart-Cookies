@@ -19,7 +19,7 @@
 #define   MESH_PASSWORD   "somethingSneaky"
 #define   MESH_PORT       5555
 
-char serialBuf[40];
+char serialBuf[100];
 int i1 = 1;
 
 ////  char fromBuf[10];
@@ -90,31 +90,24 @@ void receivedCallback( uint32_t from, String &msg ) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.c_str());
   }
-  String Temp = doc["T"];
-  String Hum = doc["H"];
-  String Pres = doc["P"];
 
-  Serial.print("$,");
-  Serial.printf("%u,", from);
-  Serial.print(Temp);
-  Serial.print(",");
-  Serial.print(Hum);
-  Serial.print(",");
-  Serial.println(Pres);
+  if (doc["req"] == "$") {
+    String Temp = doc["T"];
+    String Hum = doc["H"];
+    String Pres = doc["P"];
 
-  //   strcpy(cString, "$,123456789,");
-  ////   sprintf(fromBuf, "%u,", from);
-  ////   strcpy(fromBuf, "12345678,");
-  ////   strcat(cString, fromBuf);
-  ////   memset(fromBuf, 0, sizeof(fromBuf));
-  //   strcat(cString, Temp.c_str());
-  //   strcat(cString, ",");
-  //   strcat(cString, Hum.c_str());
-  //   strcat(cString, ",");
-  //   strcat(cString, Pres.c_str());
-  //   webSocket1.broadcastTXT(cString);
-  //   memset(cString, 0, sizeof(cString));
-
+    Serial.printf("$,%u,", from);
+    Serial.print(Temp);
+    Serial.print(",");
+    Serial.print(Hum);
+    Serial.print(",");
+    Serial.println(Pres);
+  }
+  else if (doc["req"] == "?") {
+    String nodeName = doc["name"];
+    Serial.printf("?,%u,", from);
+    Serial.println(nodeName);
+  }
 }
 
 void newConnectionCallback(uint32_t nodeId) {
@@ -198,31 +191,41 @@ void loop() {
     if (c == '\n') {  //looks for end of data packet marker
       Serial.read(); //gets rid of following \r
       if (readString.startsWith("{")) {
-        StaticJsonDocument<200> doc;
-        readString.toCharArray(serialBuf, 40); //was 40
+        DynamicJsonDocument doc(1024);
+        readString.toCharArray(serialBuf, 100); //was 40
 
         Serial.println(serialBuf); //prints string to serial port out
-
-
         DeserializationError error = deserializeJson(doc, serialBuf);
 
         // Test if parsing succeeds.
         if (error) {
-          Serial.print(F("deserializeJson() failed: "));
+          Serial.println("deserializeJson() failed: ");
           //            Serial.println(error.f_str());
           return;
         }
 
+        Serial.println("probe1");
 
         const char* dest_node = doc["node"];
-        const char* sensor = doc["req"];
+        const char* req = doc["req"];
+        const char* ren = doc["ren"];
 
+        Serial.println("probe2");
 
-        Serial.println(dest_node); //prints string to serial port out
-        Serial.println(sensor); //prints string to serial port out
-
+        //        Serial.println(dest_node); //prints string to serial port out
+        //        Serial.println(sensor); //prints string to serial port out
+        Serial.println("probe3");
         uint32_t destID = strtoul(dest_node, NULL, 10);
-        mesh.sendSingle(destID, "?name");
+        Serial.println("probe4");
+
+        StaticJsonDocument<200> reqJson;
+        Serial.println("probe5");
+
+        reqJson["req"] = req;
+        reqJson["ren"] = ren;
+        String msg;
+        serializeJson(reqJson, msg);
+        mesh.sendSingle(destID, msg);
       }
       //      if (serialBuf[0] == "!"){
       //        //parse info
