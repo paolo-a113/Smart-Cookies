@@ -102,6 +102,15 @@ void setup() {
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(LittleFS, "/style.css", "text/css");
   });
+  server.on("/bootstrap.min.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(LittleFS, "/bootstrap.min.js", "text/js");
+  });
+  server.on("/jquery.easing.min.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(LittleFS, "/jquery.easing.min.js", "text/js");
+  });
+  server.on("/jquery-3.6.0.slim.min.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(LittleFS, "/jquery-3.6.0.slim.min.js", "text/js");
+  });
 
   //    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
 
