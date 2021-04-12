@@ -13,10 +13,16 @@
 #include <ESP8266HTTPClient.h>
 #include <AsyncElegantOTA.h>
 
+#include <Wire.h>
+#include <Adafruit_BMP280.h>
+
+
 
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
 //Receiver code
 char cString[40];
+char sensorString[40];
+
 byte chPos = 0;
 byte ch = 0;
 
@@ -30,11 +36,12 @@ const char* password = "";  //Enter Password here
 AsyncWebServer server(80);
 WebSocketsServer webSocket1 = WebSocketsServer(81);
 
-//unsigned long previousMillis = 0;        // will store last time LED was updated
+unsigned long previousMillis = 0;        // will store last time LED was updated
 
 // constants won't change:
-//const long interval = 2000;           // interval at which to blink (milliseconds)
+const long interval = 100;           // interval at which to blink (milliseconds)
 
+Adafruit_BMP280 bmp; // I2C
 
 void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length)
 {
@@ -59,6 +66,18 @@ void setup() {
   Serial.println("SMART COOKIE - SI7021");
   Serial.println("VERSION 1.1");
   pinMode(LED_BUILTIN, OUTPUT);
+
+  if (!bmp.begin()) {
+    Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
+    while (1);
+  }
+
+  /* Default settings from datasheet. */
+  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
 
 
   // Initialize SPIFFS
@@ -131,12 +150,20 @@ void loop() {
 
   MDNS.update();
 
-  //  unsigned long currentMillis = millis();
+  unsigned long currentMillis = millis();
 
-  //  if (currentMillis - previousMillis >= interval) {
-  //    previousMillis = currentMillis;
-  //    getData();
-  //  }
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    char buff[50];
+
+
+    //  strcpy(sensorString,"$,0,");
+    //  strcat(sensorString,bmp.readTemperature());
+    //  strcat(sensorString,",null,");
+    //  strcat(sensorString,bmp.readPressure());
+    sprintf(buff, "$,0,%f,null,%f", bmp.readTemperature(), bmp.readPressure() / 100.00);
+    webSocket1.broadcastTXT(buff);
+  }
 
   if (Serial.available())  {
     char c = Serial.read();  //gets one byte from serial buffer

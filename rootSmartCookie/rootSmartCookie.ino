@@ -176,7 +176,7 @@ void setup() {
 
   //    webSocket1.begin();
 
-
+  Serial.println(mesh.getNodeId());
 }
 void loop() {
   mesh.update();
