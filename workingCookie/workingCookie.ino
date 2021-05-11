@@ -43,7 +43,7 @@ bool actualUpdate(bool sketch = false) {
     ret = ESPhttpUpdate.update(updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
   }
   else {
-//    ret = ESPhttpUpdate.httpUpdateSPIFFS(updateUrl, SPIFFS_VERSION);
+    //    ret = ESPhttpUpdate.httpUpdateSPIFFS(updateUrl, SPIFFS_VERSION);
   }
   if (ret != HTTP_UPDATE_NO_UPDATES) {
     if (ret == HTTP_UPDATE_OK) {
@@ -109,9 +109,13 @@ void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length)
 void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
+  long timewait = 0;
+  long timeout = 10000;
+
   WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED && timewait < timeout) {
     delay(500);
+    timewait = timewait + 500;
     Serial.print(".");
   }
   if (actualUpdate(false)) ESP.restart();
@@ -123,7 +127,7 @@ void setup() {
   Serial.println("SMART COOKIE - SI7021");
   Serial.print("FIRMWARE VERSION: ");
   Serial.println(TRUC_VERSION);
-    Serial.print("WEB APP VERSION: ");
+  Serial.print("WEB APP VERSION: ");
   Serial.println(SPIFFS_VERSION );
   pinMode(LED_BUILTIN, OUTPUT);
 
