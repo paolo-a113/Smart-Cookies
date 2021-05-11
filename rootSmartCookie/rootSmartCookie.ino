@@ -12,7 +12,14 @@
 #include <ESP8266HTTPClient.h>
 #include <AsyncElegantOTA.h>
 #include <ArduinoJson.h>
+#include <ESP8266httpUpdate.h>
 
+#define TRUC_VERSION "0_0_3"
+#define SPIFFS_VERSION "0_5_0"
+#define THIS_DEVICE "root"
+#define REMOTE_IP "34.208.195.177"
+
+const char * updateUrl = "http://"REMOTE_IP":1880/update/"THIS_DEVICE;
 
 // WiFi Credentials
 #define   MESH_PREFIX     "mesh0"
@@ -22,19 +29,35 @@
 char serialBuf[100];
 int i1 = 1;
 
-////  char fromBuf[10];
-//  byte chPos = 0;
-//  byte ch = 0;
 String readString;
 
-/* Put your SSID & Password */
-//const char* ssid = "Smart Cookies";  // Enter SSID here
-//const char* password = "";  //Enter Password here
+bool actualUpdate(bool sketch = false) {
+  Serial.println("CHECKING FOR UPDATE...");
+  String msg;
+  t_httpUpdate_return ret;
 
-// Create AsyncWebServer object on port 80
-//AsyncWebServer server(80);
-//WebSocketsServer webSocket1 = WebSocketsServer(81);
+  ESPhttpUpdate.rebootOnUpdate(false);
+  if (sketch) {
+    ret = ESPhttpUpdate.update(updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
+  }
+  else {
+    //    ret = ESPhttpUpdate.updateSPIFFS(updateUrl, SPIFFS_VERSION);
+  }
+  if (ret != HTTP_UPDATE_NO_UPDATES) {
+    if (ret == HTTP_UPDATE_OK) {
 
+      Serial.printf("UPDATE SUCCESSFUL");
+      return true;
+    }
+    else {
+      if (ret == HTTP_UPDATE_FAILED) {
+
+        Serial.printf("UPDATE FAILED");
+      }
+    }
+  }
+  return false;
+}
 
 SimpleList<uint32_t> nodes;
 
@@ -111,36 +134,38 @@ void receivedCallback( uint32_t from, String &msg ) {
 }
 
 void newConnectionCallback(uint32_t nodeId) {
-  //  Serial.printf("--> startHere: New Connection, nodeId = %u\n", nodeId);
   sendMeshTopology();
 }
 void changedConnectionCallback() {
-  //  Serial.printf("Changed connections\n");
   sendMeshTopology();
 }
 void nodeTimeAdjustedCallback(int32_t offset) {
-  //  Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(), offset);
 }
 void showNodeList() {
 }
 
 void setup() {
   Serial.begin(115200);
-  //  pinMode(Button1, INPUT);
-  //  pinMode(Button2, INPUT);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  if (actualUpdate(false)) ESP.restart();
+  delay(100);
+  if (actualUpdate(true)) ESP.restart();
 
-  //  // Initialize SPIFFS
-  //  if(!SPIFFS.begin()){
-  //    Serial.println("An Error has occurred while mounting SPIFFS");
-  //    return;
-  //  }
+  WiFi.disconnect();
+
+  Serial.println("[ROOT] SMART COOKIE - SI7021");
+  Serial.print("FIRMWARE VERSION: ");
+  Serial.println(TRUC_VERSION);
+  Serial.print("WEB APP VERSION: ");
+  Serial.println(SPIFFS_VERSION );
 
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
-  //    mesh.initOTAReceive("bridge");
-  //  mesh.stationManual("ATTeEPEtxi", "2s?h7j7sw8j=");
-
-
 
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);

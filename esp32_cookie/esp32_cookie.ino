@@ -39,7 +39,7 @@ SimpleList<uint32_t> nodes;
 
 /* Put your SSID & Password */
 const char* ssid = "Smart Cookies";  // Enter SSID here
-const char* password = "";  //Enter Password here
+const char* password = "123";  //Enter Password here
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);

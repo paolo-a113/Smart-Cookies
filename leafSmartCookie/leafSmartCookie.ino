@@ -4,6 +4,42 @@
 #include "Adafruit_Si7021.h"
 #include <LittleFS.h>   // Include the SPIFFS library
 #include <ArduinoJson.h>
+#include <ESP8266httpUpdate.h>
+
+
+#define TRUC_VERSION "0_0_2"
+#define SPIFFS_VERSION "0_5_0"
+#define THIS_DEVICE "leaf"
+#define REMOTE_IP "34.208.195.177"
+const char * updateUrl = "http://"REMOTE_IP":1880/update/"THIS_DEVICE;
+
+bool actualUpdate(bool sketch = false) {
+  Serial.println("CHECKING FOR UPDATE...");
+  String msg;
+  t_httpUpdate_return ret;
+
+  ESPhttpUpdate.rebootOnUpdate(false);
+  if (sketch) {
+    ret = ESPhttpUpdate.update(updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
+  }
+  else {
+    //    ret = ESPhttpUpdate.httpUpdateSPIFFS(updateUrl, SPIFFS_VERSION);
+  }
+  if (ret != HTTP_UPDATE_NO_UPDATES) {
+    if (ret == HTTP_UPDATE_OK) {
+
+      Serial.printf("UPDATE SUCCESSFUL");
+      return true;
+    }
+    else {
+      if (ret == HTTP_UPDATE_FAILED) {
+
+        Serial.printf("UPDATE FAILED");
+      }
+    }
+  }
+  return false;
+}
 
 
 //#include <DHT.h>
@@ -78,7 +114,7 @@ String getName() {
   File configFile = LittleFS.open("/config.json", "r");
   if (!configFile) {
     setName("My Sensor Node");
-//    setMesh("mesh0");
+    //    setMesh("mesh0");
 
     Serial.println("Failed to open config file");
     return "";
@@ -188,6 +224,24 @@ void nodeTimeAdjustedCallback(int32_t offset) {
 }
 void setup() {
   Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  if (actualUpdate(false)) ESP.restart();
+  delay(100);
+  if (actualUpdate(true)) ESP.restart();
+
+  WiFi.disconnect();
+
+  Serial.println("SMART COOKIE - SI7021");
+  Serial.print("FIRMWARE VERSION: ");
+  Serial.println(TRUC_VERSION);
+  Serial.print("WEB APP VERSION: ");
+  Serial.println(SPIFFS_VERSION );
+
   bool status;
   status = sensor.begin();
   if (!status) {
@@ -198,7 +252,7 @@ void setup() {
     Serial.println("SENSOR WORKING");
   }
 
-    delay(1000);
+  delay(1000);
   Serial.println("Mounting FS...");
 
   if (!LittleFS.begin()) {
@@ -206,7 +260,7 @@ void setup() {
     return;
   }
   getName();
-  
+
   //  pinMode(Relay1, OUTPUT);
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );

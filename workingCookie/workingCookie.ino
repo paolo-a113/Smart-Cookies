@@ -12,10 +12,54 @@
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
 #include <AsyncElegantOTA.h>
+#include <ESP8266httpUpdate.h>
+
+
+#include <Arduino.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
+
 
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
 
+#define TRUC_VERSION "0_0_5"
+#define SPIFFS_VERSION "0_5_0"
+#define THIS_DEVICE "working"
+#define REMOTE_IP "34.208.195.177"
+const char * updateUrl = "http://"REMOTE_IP":1880/update/"THIS_DEVICE;
+
+bool actualUpdate(bool sketch = false) {
+  Serial.println("CHECKING FOR UPDATE...");
+  String msg;
+  t_httpUpdate_return ret;
+
+  ESPhttpUpdate.rebootOnUpdate(false);
+  if (sketch) {
+    ret = ESPhttpUpdate.update(updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
+  }
+  else {
+//    ret = ESPhttpUpdate.httpUpdateSPIFFS(updateUrl, SPIFFS_VERSION);
+  }
+  if (ret != HTTP_UPDATE_NO_UPDATES) {
+    if (ret == HTTP_UPDATE_OK) {
+
+      Serial.printf("UPDATE SUCCESSFUL");
+      return true;
+    }
+    else {
+      if (ret == HTTP_UPDATE_FAILED) {
+
+        Serial.printf("UPDATE FAILED");
+      }
+    }
+  }
+  return false;
+}
 
 
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
@@ -30,7 +74,7 @@ String readString;
 
 /* Put your SSID & Password */
 const char* ssid = "Smart Cookies";  // Enter SSID here
-const char* password = "";  //Enter Password here
+const char* password = "123";  //Enter Password here
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -61,14 +105,30 @@ void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length)
 
 }
 
+
 void setup() {
   Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  if (actualUpdate(false)) ESP.restart();
+  delay(100);
+  if (actualUpdate(true)) ESP.restart();
+
+  WiFi.disconnect();
+
   Serial.println("SMART COOKIE - SI7021");
-  Serial.println("VERSION 1.1");
+  Serial.print("FIRMWARE VERSION: ");
+  Serial.println(TRUC_VERSION);
+    Serial.print("WEB APP VERSION: ");
+  Serial.println(SPIFFS_VERSION );
   pinMode(LED_BUILTIN, OUTPUT);
 
   if (!bmp.begin()) {
-    Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
+    Serial.println("Could not find a valid BMP280 sensor, check wiring!");
     while (1);
   }
 
@@ -88,7 +148,7 @@ void setup() {
 
 
   // PRODUCTION MODE
-  WiFi.softAP(ssid);
+  WiFi.softAP(ssid, password);
 
   // TESTING MODE
   //  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
