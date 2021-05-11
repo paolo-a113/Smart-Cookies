@@ -48,20 +48,18 @@ bool actualUpdate(bool sketch = false) {
   if (ret != HTTP_UPDATE_NO_UPDATES) {
     if (ret == HTTP_UPDATE_OK) {
 
-      Serial.printf("UPDATE SUCCESSFUL");
+      Serial.println("UPDATE SUCCESSFUL");
       return true;
     }
     else {
       if (ret == HTTP_UPDATE_FAILED) {
 
-        Serial.printf("UPDATE FAILED");
+        Serial.println("UPDATE FAILED");
       }
     }
   }
   return false;
 }
-
-
 //Adafruit_Si7021 sensor = Adafruit_Si7021();
 //Receiver code
 char cString[40];
@@ -89,7 +87,6 @@ Adafruit_BMP280 bmp; // I2C
 
 void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length)
 {
-
   if (type == WStype_TEXT)
   {
     for (int i = 0; i < length; i++) {
@@ -101,8 +98,6 @@ void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length)
     //strcpy(bin, (char *)(payload)); // skip first char
     //Serial.print(bin);
   }
-
-
 }
 
 
@@ -152,7 +147,17 @@ void setup() {
 
 
   // PRODUCTION MODE
-  WiFi.softAP(ssid, password);
+  byte best_channel = channel_chooser();
+
+  while (best_channel == 255) {         // while the scan isn't finished
+    best_channel = channel_chooser();
+    delay(0);                           // needed to avoid a WDT trigger, yields the process time to background esp tasks
+  }
+
+  Serial.printf("Choosing WiFi Channel %d\n", best_channel);
+
+  WiFi.softAP(ssid, password, best_channel, false, 1);
+  //  WiFi.softAP(ssid, password);
 
   // TESTING MODE
   //  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
@@ -248,4 +253,92 @@ void loop() {
     }
   }
 
+}
+
+byte channel_chooser() {
+  int scan_result = WiFi.scanComplete();
+
+  if (scan_result < 0) {       //  if not scanning return 255 and launch scan
+    WiFi.scanNetworks(true);
+    return 255;
+
+  } else if (scan_result == 0) { // return 1 if found no networks
+
+    return 1;
+
+  } else {
+
+    // create the list of channel weights
+
+    int channels[14][2];
+
+    for (byte a = 1; a < 14; a++) {
+      channels[a][0] = a;
+      channels[a][1] = 0;
+    }
+
+    for (byte a = 0; a < scan_result; a++) {
+      channels[WiFi.channel(a)][0] = WiFi.channel(a);
+      channels[a][1] += 100 + WiFi.RSSI(a);
+    }
+
+    // adding adjacent channels to channel weight
+
+    for (byte a = 1; a < 14; a++) {
+      if (a > 1) {
+        channels[a][1] += channels[a - 1][1] / 2;
+      }
+      if (a > 2) {
+        channels[a][1] += channels[a - 2][1] / 4;
+      }
+      if (a < 13) {
+        channels[a][1] += channels[a + 1][1] / 2;
+      }
+      if (a < 12) {
+        channels[a][1] += channels[a + 2][1] / 4;
+      }
+    }
+
+    // bubble sort the list by weight
+
+    bool swapped = 1;
+    while (swapped) {
+      for (byte a = 1; a < 13; a++) {
+        if (a == 1) {
+          swapped = 0;
+        }
+        if (channels[a][1] > channels[a + 1][1]) {
+          byte buf = channels[a][0];
+          channels[a][0] = channels[a + 1][0];
+          channels[a + 1][0] = buf;
+
+          buf = channels[a][1];
+          channels[a][1] = channels[a + 1][1];
+          channels[a + 1][1] = buf;
+          swapped = 1;
+        }
+      }
+    }
+
+    // print the sorted results
+
+    for (byte a = 1; a < 14; a++) {
+      Serial.print(channels[a][0]);
+      Serial.print(" - ");
+      Serial.println(channels[a][1]);
+    }
+
+    WiFi.scanDelete();
+
+    if (channels[1][0] == 12 || channels[1][0] == 13) {
+      if (channels[2][0] == 12 || channels[2][0] == 13) {
+
+        return channels[3][0];
+      }
+      else {
+        return channels[2][0];
+      }
+    }
+    return channels[1][0];
+  }
 }

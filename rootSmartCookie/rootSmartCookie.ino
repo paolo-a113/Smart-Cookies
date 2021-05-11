@@ -14,7 +14,7 @@
 #include <ArduinoJson.h>
 #include <ESP8266httpUpdate.h>
 
-#define TRUC_VERSION "0_0_3"
+#define TRUC_VERSION "0_0_4"
 #define SPIFFS_VERSION "0_5_0"
 #define THIS_DEVICE "root"
 #define REMOTE_IP "34.208.195.177"
@@ -46,13 +46,13 @@ bool actualUpdate(bool sketch = false) {
   if (ret != HTTP_UPDATE_NO_UPDATES) {
     if (ret == HTTP_UPDATE_OK) {
 
-      Serial.printf("UPDATE SUCCESSFUL");
+      Serial.println("UPDATE SUCCESSFUL");
       return true;
     }
     else {
       if (ret == HTTP_UPDATE_FAILED) {
 
-        Serial.printf("UPDATE FAILED");
+        Serial.println("UPDATE FAILED");
       }
     }
   }
@@ -147,9 +147,13 @@ void showNodeList() {
 void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
+  long timewait = 0;
+  long timeout = 10000;
   WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED && timewait < timeout) {
     delay(500);
+    timewait = timewait + 500;
+
     Serial.print(".");
   }
   if (actualUpdate(false)) ESP.restart();
