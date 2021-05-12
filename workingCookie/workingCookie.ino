@@ -2,7 +2,6 @@
 #include <Hash.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-//#include <FS.h>
 #include "LittleFS.h" // LittleFS is declared
 
 #include <Adafruit_Sensor.h>
@@ -27,34 +26,72 @@
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
 
-#define TRUC_VERSION "0_0_5"
+#define TRUC_VERSION "0_0_9"
 #define SPIFFS_VERSION "0_5_0"
 #define THIS_DEVICE "working"
 #define REMOTE_IP "34.208.195.177"
 const char * updateUrl = "http://"REMOTE_IP":1880/update/"THIS_DEVICE;
 
+void update_started() {
+  Serial.println("CALLBACK:  HTTP update process started");
+}
+
+void update_finished() {
+  Serial.println("CALLBACK:  HTTP update process finished");
+}
+
+void update_progress(int cur, int total) {
+  Serial.printf("CALLBACK:  HTTP update process at %d of %d bytes...\n", cur, total);
+}
+
+void update_error(int err) {
+  Serial.printf("CALLBACK:  HTTP update fatal error code %d\n", err);
+}
+
 bool actualUpdate(bool sketch = false) {
   Serial.println("CHECKING FOR UPDATE...");
+  WiFiClient client;
+
+  // The line below is optional. It can be used to blink the LED on the board during flashing
+  // The LED will be on during download of one buffer of data from the network. The LED will
+  // be off during writing that buffer to flash
+  // On a good connection the LED should flash regularly. On a bad connection the LED will be
+  // on much longer than it will be off. Other pins than LED_BUILTIN may be used. The second
+  // value is used to put the LED on. If the LED is on with HIGH, that value should be passed
+  ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
+
+  // Add optional callback notifiers
+  ESPhttpUpdate.onStart(update_started);
+  ESPhttpUpdate.onEnd(update_finished);
+  ESPhttpUpdate.onProgress(update_progress);
+  ESPhttpUpdate.onError(update_error);
+
   String msg;
   t_httpUpdate_return ret;
-
+  
   ESPhttpUpdate.rebootOnUpdate(false);
+
   if (sketch) {
-    ret = ESPhttpUpdate.update(updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
+    ret = ESPhttpUpdate.update(client, updateUrl, TRUC_VERSION);  // **************** This is the line that "does the business"
   }
   else {
-    //    ret = ESPhttpUpdate.httpUpdateSPIFFS(updateUrl, SPIFFS_VERSION);
+//    ret = ESPhttpUpdate.updateFS(client, updateUrl, SPIFFS_VERSION);
   }
+
+  //    t_httpUpdate_return ret = ESPhttpUpdate.update(client, updateUrl, TRUC_VERSION);
+  // Or:
+  //t_httpUpdate_return ret = ESPhttpUpdate.update(client, "server", 80, "file.bin");
+ 
   if (ret != HTTP_UPDATE_NO_UPDATES) {
     if (ret == HTTP_UPDATE_OK) {
 
-      Serial.println("UPDATE SUCCESSFUL");
+      Serial.printf("UPDATE SUCCESSFUL");
       return true;
     }
     else {
       if (ret == HTTP_UPDATE_FAILED) {
 
-        Serial.println("UPDATE FAILED");
+        Serial.printf("UPDATE FAILED");
       }
     }
   }
@@ -115,9 +152,9 @@ void setup() {
   }
   if (actualUpdate(false)) ESP.restart();
   delay(100);
-  if (actualUpdate(true)) ESP.restart();
+//  if (actualUpdate(true)) ESP.restart();
 
-  WiFi.disconnect();
+  //  WiFi.disconnect();
 
   Serial.println("SMART COOKIE - SI7021");
   Serial.print("FIRMWARE VERSION: ");
@@ -147,33 +184,32 @@ void setup() {
 
 
   // PRODUCTION MODE
-  byte best_channel = channel_chooser();
-
-  while (best_channel == 255) {         // while the scan isn't finished
-    best_channel = channel_chooser();
-    delay(0);                           // needed to avoid a WDT trigger, yields the process time to background esp tasks
-  }
-
-  Serial.printf("Choosing WiFi Channel %d\n", best_channel);
-
-  WiFi.softAP(ssid, password, best_channel, false, 1);
-  //  WiFi.softAP(ssid, password);
+  //  byte best_channel = channel_chooser();
+  //
+  //  while (best_channel == 255) {         // while the scan isn't finished
+  //    best_channel = channel_chooser();
+  //    delay(0);                           // needed to avoid a WDT trigger, yields the process time to background esp tasks
+  //  }
+  //
+  //  Serial.printf("Choosing WiFi Channel %d\n", best_channel);
+  //
+  //  WiFi.softAP(ssid, password, best_channel, false, 1);
 
   // TESTING MODE
-  //  WiFi.begin("ATTeEPEtxi","2s?h7j7sw8j=");
+  //  WiFi.begin("ATTeEPEtxi", "2s?h7j7sw8j=");
   //  while (WiFi.status() != WL_CONNECTED) {
-  //    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  //    delay(250);
-  //    digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
-  //    delay(250);
+  //    //      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  //    //      delay(250);
+  //    //      digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
+  //    //      delay(250);
   //    Serial.println("Connecting...");
   //  }
 
   delay(100);
   digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
 
-  Serial.println(WiFi.softAPIP());
-  //  Serial.println(WiFi.localIP());
+  //  Serial.println(WiFi.softAPIP());
+  //    Serial.println(WiFi.localIP());
 
 
   if (!MDNS.begin("smartcookies")) {

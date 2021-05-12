@@ -7,7 +7,7 @@
 #include <ESP8266httpUpdate.h>
 
 
-#define TRUC_VERSION "0_0_2"
+#define TRUC_VERSION "0_0_0"
 #define SPIFFS_VERSION "0_5_0"
 #define THIS_DEVICE "leaf"
 #define REMOTE_IP "34.208.195.177"
